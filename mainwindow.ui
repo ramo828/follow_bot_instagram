@@ -219,7 +219,7 @@
    <widget class="QPushButton" name="start_button">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>184</x>
       <y>270</y>
       <width>87</width>
       <height>26</height>
@@ -235,7 +235,7 @@
    <widget class="QPushButton" name="save_button">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>270</y>
       <width>121</width>
       <height>26</height>
@@ -279,6 +279,7 @@
      </property>
      <property name="font">
       <font>
+       <pointsize>10</pointsize>
        <bold>true</bold>
       </font>
      </property>
@@ -446,6 +447,22 @@ color: rgb(70, 149, 3);</string>
       <string>Follow sayı:</string>
      </property>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="start_button_2">
+    <property name="geometry">
+     <rect>
+      <x>463</x>
+      <y>270</y>
+      <width>87</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(222, 221, 218);</string>
+    </property>
+    <property name="text">
+     <string>Follow at</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

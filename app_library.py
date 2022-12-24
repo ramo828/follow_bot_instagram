@@ -5,58 +5,91 @@ from selenium.webdriver.support.ui import WebDriverWait
 from os import system
 import sqlite3 as sql
 from os.path import exists
+from PyQt6.QtCore import QThread, QObject, pyqtSignal as Signal, pyqtSlot as Slot
 
-class Instagram:
-    driver_path = "./chromedriver"
 
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
+class Instagram(QObject):
+    terminalSignal = Signal(str)
+    def init_browser(self, driver_path="chromedriver"):
         self.followers = []
         self.browserProfile = webdriver.ChromeOptions()
         self.browserProfile.add_experimental_option('prefs', {'intl.accept_languages':'en,en_US'})
         # self.browserProfile.add_argument("--headless")
-        self.browser = webdriver.Chrome(Instagram.driver_path, options=self.browserProfile)
-        
+        self.browser = webdriver.Chrome(driver_path, options=self.browserProfile)
 
+    def setAccount(self, username, password):
+        self.username = username
+        self.password = password
+
+    def showTerminal(self, msg):
+        print(f"Terminal class showTerminal {msg}")
+        self.terminalSignal.emit(msg)
+        
     def signIn(self):
+        self.showTerminal("Browser açıldı")
         self.browser.get("https://www.instagram.com/accounts/login/")
         time.sleep(3)
-        usernameInput = self.browser.find_element_by_name('username')
-        passwordInput = self.browser.find_element_by_name('password')
-        usernameInput.send_keys(self.username)
-        passwordInput.send_keys(self.password)
-        passwordInput.send_keys(Keys.ENTER)
-       
+        if(self.browser.find_element_by_name('username') and self.browser.find_element_by_name('password')):
+            usernameInput = self.browser.find_element_by_name('username')
+            passwordInput = self.browser.find_element_by_name('password')
+            usernameInput.send_keys(self.username)
+            passwordInput.send_keys(self.password)
+            passwordInput.send_keys(Keys.ENTER)
+        else:
+            self.showTerminal("Xəta baş verdi")
+            self.browser.close()
+
         time.sleep(5)
         if self.browser.find_element_by_class_name('_ac8f'):
+            self.showTerminal("Hesaba girildi")
             el = self.browser.find_element_by_class_name('_ac8f')
             el.find_element_by_tag_name('button').click()
+        else:
+            self.showTerminal("Xəta baş verdi")
+            self.browser.close()
+
         time.sleep(5)
         if self.browser.find_element_by_class_name('_a9-z'):
+            self.showTerminal("Bildiriş bağlandı")
             clo = self.browser.find_element_by_class_name('_a9-z')
             clo.find_element_by_tag_name('button').click()
+        else:
+            self.showTerminal("Xəta baş verdi")
+            self.browser.close()
+
     def goComment(self, url):
         # self.browser.maximize_window()
         self.browser.get(url+"liked_by/")
+        time.sleep(5)
+        self.showTerminal("Commentə girildi")
+        for i in range(10000):
+            self.browser.execute_script(f"window.scrollTo(0, {i});")
+        self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(8)
         users = self.browser.find_element_by_class_name("x78zum5").find_elements_by_class_name("_abbj")
         system("rm userLists.txt")
         counter = 0
-        self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        self.showTerminal("İstifadəçilər yüklənir")
+        
         time.sleep(5)
 
         for user in users:
-            print(counter)
             userLink = user.find_element_by_tag_name("a").get_attribute("href")
-            print(userLink)
-            self.writeUserList(userLink)
+            clearUserList = userLink.replace("https://www.instagram.com/","").replace("/","").replace(" ","")
+            self.showTerminal(f"{clearUserList}")
+            self.writeUserList(clearUserList)
             counter+=1
+        self.showTerminal(f"İstifadəçi sayı: {counter}")
         self.browser.close()
 
     def writeUserList(self, data):
         uList = open("userLists.txt","a")
         uList.write(f"{data}\n")
+
+class InstagramFollow:
+    def __init__(self):
+        pass
+
 
 class Data:
     def __init__(self):

@@ -84,11 +84,11 @@ class Ui_home(object):
 "")
         self.comment_link.setObjectName("comment_link")
         self.start_button = QtWidgets.QPushButton(self.home_page)
-        self.start_button.setGeometry(QtCore.QRect(180, 270, 87, 26))
+        self.start_button.setGeometry(QtCore.QRect(184, 270, 87, 26))
         self.start_button.setStyleSheet("background-color: rgb(222, 221, 218);")
         self.start_button.setObjectName("start_button")
         self.save_button = QtWidgets.QPushButton(self.home_page)
-        self.save_button.setGeometry(QtCore.QRect(20, 270, 121, 26))
+        self.save_button.setGeometry(QtCore.QRect(10, 270, 121, 26))
         self.save_button.setStyleSheet("background-color: rgb(222, 221, 218);")
         self.save_button.setObjectName("save_button")
         self.terminalBox = QtWidgets.QGroupBox(self.home_page)
@@ -101,6 +101,7 @@ class Ui_home(object):
         self.terminal = QtWidgets.QTextEdit(self.terminalBox)
         self.terminal.setGeometry(QtCore.QRect(10, 20, 241, 81))
         font = QtGui.QFont()
+        font.setPointSize(10)
         font.setBold(True)
         self.terminal.setFont(font)
         self.terminal.setStyleSheet("background-color: rgb(246, 245, 244);\n"
@@ -165,6 +166,10 @@ class Ui_home(object):
         font.setBold(True)
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
+        self.start_button_2 = QtWidgets.QPushButton(self.home_page)
+        self.start_button_2.setGeometry(QtCore.QRect(463, 270, 87, 26))
+        self.start_button_2.setStyleSheet("background-color: rgb(222, 221, 218);")
+        self.start_button_2.setObjectName("start_button_2")
         home.setCentralWidget(self.home_page)
         self.menubar = QtWidgets.QMenuBar(home)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 568, 23))
@@ -199,6 +204,7 @@ class Ui_home(object):
         self.label_1.setText(_translate("home", "Fasilə müddəti: "))
         self.follow_number.setText(_translate("home", "0"))
         self.label_2.setText(_translate("home", "Follow sayı:"))
+        self.start_button_2.setText(_translate("home", "Follow at"))
 
 
 if __name__ == "__main__":

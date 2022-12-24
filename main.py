@@ -1,8 +1,13 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLineEdit, QFileDialog
 from PyQt6.QtCore import QThread, QObject, pyqtSignal as Signal, pyqtSlot as Slot
+from PyQt6.QtGui import QTextCursor
 from main_gui import Ui_home
 import sys
-from get_link_users import Instagram, Data
+import datetime
+from app_library import Instagram, Data
+import threading as td
+
+
 class Pencere(QMainWindow, Ui_home):
 
     def __init__(self):
@@ -17,7 +22,21 @@ class Pencere(QMainWindow, Ui_home):
         self.save_button.clicked.connect(self.save_data)
         self.show_password_flag = False
         self.driver_path = ""
+        self.instagram = Instagram()
+        self.instagram.terminalSignal.connect(self.setTerminal)
+        # self.setTerminal("Hello World")
+       
 
+
+    def setTerminal(self, message):
+        an = datetime.datetime.now()
+        saat = datetime.datetime.strftime(an, '%X') # Saat
+        cursor1 = QTextCursor(self.terminal.textCursor())
+        cursor1.movePosition(cursor1.MoveOperation.Down)
+        self.terminal.setTextCursor(cursor1)
+        self.terminal.insertPlainText(f" >> {saat} {message}\n")
+
+        print("OK")
 
     def show_password_button(self):
         if(self.show_password_flag):
@@ -77,12 +96,17 @@ class Pencere(QMainWindow, Ui_home):
             print(self.driver_path)
    
     def start(self):
+        self.terminal.clear()
+        self.thread = td.Thread(target=self.runDriver, daemon=True)
+        self.thread.start()
+
+    def runDriver(self):
         username = self.login.text()
         password =  self.password.text()
-        instagram = Instagram(username=username, password= password)
-        instagram.signIn()
-        instagram.goComment(self.comment_link.text())
-
+        self.instagram.setAccount(username=username, password=password)
+        self.instagram.init_browser(self.driver.text())
+        self.instagram.signIn()
+        self.instagram.goComment(self.comment_link.text())
 
 app = QApplication(sys.argv)
 pencere = Pencere()
