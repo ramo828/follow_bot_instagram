@@ -1,0 +1,6 @@
+instagrapi
+pillow
+pyside6
+pyqt6
+pyinstaller
+selenium

@@ -4,9 +4,9 @@ from PyQt6.QtGui import QTextCursor
 from main_gui import Ui_home
 import sys
 import datetime
-from app_library import Instagram, Data
+from app_library import Instagram, Data, InstagramFollow
 import threading as td
-
+from time import sleep
 
 class Pencere(QMainWindow, Ui_home):
 
@@ -15,15 +15,18 @@ class Pencere(QMainWindow, Ui_home):
         self.setWindowTitle("Follow Bot")
         self.setupUi(self)
         self.data = Data()
+        self.instagram = Instagram()
+        self.follower = InstagramFollow()
         self.load_data()
         self.driver_button.clicked.connect(self.click_driver)
         self.start_button.clicked.connect(self.start)
         self.show_password.clicked.connect(self.show_password_button)
         self.save_button.clicked.connect(self.save_data)
+        self.follow_button.clicked.connect(self.startFollower)
         self.show_password_flag = False
         self.driver_path = ""
-        self.instagram = Instagram()
         self.instagram.terminalSignal.connect(self.setTerminal)
+
         # self.setTerminal("Hello World")
        
 
@@ -99,7 +102,9 @@ class Pencere(QMainWindow, Ui_home):
         self.terminal.clear()
         self.thread = td.Thread(target=self.runDriver, daemon=True)
         self.thread.start()
-
+    def startFollower(self):
+        self.thread = td.Thread(target=self.runFollower, daemon=True)
+        self.thread.start()
     def runDriver(self):
         username = self.login.text()
         password =  self.password.text()
@@ -107,6 +112,26 @@ class Pencere(QMainWindow, Ui_home):
         self.instagram.init_browser(self.driver.text())
         self.instagram.signIn()
         self.instagram.goComment(self.comment_link.text())
+
+    def runFollower(self):
+        username = self.login.text()
+        password =  self.password.text()
+        self.follower.connect(username, password)
+        f = open("userLists.txt","r", encoding="utf-8")
+        userData = f.readlines()
+        sleep(int(self.start_time.text()))
+        for i in range(int(self.follow_number.text())):
+            sleep(int(self.sleep_time.text()))
+            length  = len(userData[i])
+            id = self.follower.username2id(userData[i][:length-1])
+            print(id)
+            if(self.follower.userFollow(id)):
+                self.setTerminal(f"{i} - {userData[i]} follow atıldı")
+            else:
+                self.setTerminal("Xəta baş verdi")
+
+        self.setTerminal("Follow atma tamamlandı")
+
 
 app = QApplication(sys.argv)
 pencere = Pencere()

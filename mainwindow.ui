@@ -448,7 +448,7 @@ color: rgb(70, 149, 3);</string>
      </property>
     </widget>
    </widget>
-   <widget class="QPushButton" name="start_button_2">
+   <widget class="QPushButton" name="follow_button">
     <property name="geometry">
      <rect>
       <x>463</x>

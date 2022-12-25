@@ -166,10 +166,10 @@ class Ui_home(object):
         font.setBold(True)
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
-        self.start_button_2 = QtWidgets.QPushButton(self.home_page)
-        self.start_button_2.setGeometry(QtCore.QRect(463, 270, 87, 26))
-        self.start_button_2.setStyleSheet("background-color: rgb(222, 221, 218);")
-        self.start_button_2.setObjectName("start_button_2")
+        self.follow_button = QtWidgets.QPushButton(self.home_page)
+        self.follow_button.setGeometry(QtCore.QRect(463, 270, 87, 26))
+        self.follow_button.setStyleSheet("background-color: rgb(222, 221, 218);")
+        self.follow_button.setObjectName("follow_button")
         home.setCentralWidget(self.home_page)
         self.menubar = QtWidgets.QMenuBar(home)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 568, 23))
@@ -204,7 +204,7 @@ class Ui_home(object):
         self.label_1.setText(_translate("home", "Fasilə müddəti: "))
         self.follow_number.setText(_translate("home", "0"))
         self.label_2.setText(_translate("home", "Follow sayı:"))
-        self.start_button_2.setText(_translate("home", "Follow at"))
+        self.follow_button.setText(_translate("home", "Follow at"))
 
 
 if __name__ == "__main__":

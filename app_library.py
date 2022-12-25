@@ -6,6 +6,7 @@ from os import system
 import sqlite3 as sql
 from os.path import exists
 from PyQt6.QtCore import QThread, QObject, pyqtSignal as Signal, pyqtSlot as Slot
+from instagrapi import Client
 
 
 class Instagram(QObject):
@@ -16,6 +17,7 @@ class Instagram(QObject):
         self.browserProfile.add_experimental_option('prefs', {'intl.accept_languages':'en,en_US'})
         # self.browserProfile.add_argument("--headless")
         self.browser = webdriver.Chrome(driver_path, options=self.browserProfile)
+
 
     def setAccount(self, username, password):
         self.username = username
@@ -49,7 +51,7 @@ class Instagram(QObject):
             self.browser.close()
 
         time.sleep(5)
-        if self.browser.find_element_by_class_name('_a9-z'):
+        if self.browser.find_element_by_class_name('_a9-z').size() > 0:
             self.showTerminal("Bildiriş bağlandı")
             clo = self.browser.find_element_by_class_name('_a9-z')
             clo.find_element_by_tag_name('button').click()
@@ -62,8 +64,8 @@ class Instagram(QObject):
         self.browser.get(url+"liked_by/")
         time.sleep(5)
         self.showTerminal("Commentə girildi")
-        for i in range(10000):
-            self.browser.execute_script(f"window.scrollTo(0, {i});")
+        for i in range(500):
+            self.browser.execute_script(f"window.scrollTo(0, {i*2});")
         self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(8)
         users = self.browser.find_element_by_class_name("x78zum5").find_elements_by_class_name("_abbj")
@@ -83,12 +85,36 @@ class Instagram(QObject):
         self.browser.close()
 
     def writeUserList(self, data):
-        uList = open("userLists.txt","a")
+        uList = open("userLists.txt","a",encoding="utf-8")
         uList.write(f"{data}\n")
 
 class InstagramFollow:
     def __init__(self):
-        pass
+        self.client = Client()
+
+    def connect(self, ACCOUNT_USERNAME, ACCOUNT_PASSWORD):
+        self.client.login(ACCOUNT_USERNAME, ACCOUNT_PASSWORD)
+
+    def username2id(self, USER_ID):
+        print(USER_ID)
+        return self.client.user_id_from_username(USER_ID)
+
+    def userFollow(self, user_id):
+        print(user_id)
+        if(self.client.user_follow(user_id)):
+            return True
+        else:
+            return False
+
+    
+
+    def userUnfollow(self, user_id):
+        print(user_id)
+        if(self.client.user_unfollow(user_id)):
+            return True
+        else:
+            return False
+
 
 
 class Data:
@@ -127,3 +153,4 @@ class Data:
         addValue = "UPDATE settings SET login = '{0}',password = '{1}', driver_path = '{2}', comment_link = '{3}', start_time = '{4}',sleep_time = '{5}',follow_limit = '{6}'".format(args[0],args[1],args[2],args[3],args[4],args[5],args[6])
         self.cursor.execute(addValue)
         self.sql.commit()
+
