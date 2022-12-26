@@ -1,4 +1,8 @@
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 from selenium.webdriver.common.keys import Keys
 import time
 from selenium.webdriver.support.ui import WebDriverWait
@@ -30,50 +34,37 @@ class Instagram(QObject):
     def signIn(self):
         self.showTerminal("Browser açıldı")
         self.browser.get("https://www.instagram.com/accounts/login/")
-        time.sleep(3)
-        if(self.browser.find_element_by_name('username') and self.browser.find_element_by_name('password')):
-            usernameInput = self.browser.find_element_by_name('username')
-            passwordInput = self.browser.find_element_by_name('password')
-            usernameInput.send_keys(self.username)
-            passwordInput.send_keys(self.password)
-            passwordInput.send_keys(Keys.ENTER)
-        else:
-            self.showTerminal("Xəta baş verdi")
-            self.browser.close()
+        wait = WebDriverWait(self.browser, 25)        
+        username = wait.until(EC.presence_of_element_located((By.NAME, "username")))
+        password = wait.until(EC.presence_of_element_located((By.NAME, "password")))
+        username.send_keys(self.username)
+        password.send_keys(self.password)
+        password.send_keys(Keys.ENTER)
+        self.showTerminal("Hesaba girildi")
 
-        time.sleep(5)
-        if self.browser.find_element_by_class_name('_ac8f'):
-            self.showTerminal("Hesaba girildi")
-            el = self.browser.find_element_by_class_name('_ac8f')
-            el.find_element_by_tag_name('button').click()
-        else:
-            self.showTerminal("Xəta baş verdi")
-            self.browser.close()
+        el = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "_ac8f")))
+        el.find_element_by_tag_name('button').click()
+        self.showTerminal("Bildiriş bağlandı")
 
-        time.sleep(5)
-        if self.browser.find_element_by_class_name('_a9-z').size() > 0:
-            self.showTerminal("Bildiriş bağlandı")
-            clo = self.browser.find_element_by_class_name('_a9-z')
-            clo.find_element_by_tag_name('button').click()
-        else:
-            self.showTerminal("Xəta baş verdi")
-            self.browser.close()
+        clo = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "_a9-z")))
+        self.showTerminal("Notification bağlandı")
+        clo.find_element_by_tag_name('button').click()
 
+      
     def goComment(self, url):
+        wait = WebDriverWait(self.browser, 25)        
         # self.browser.maximize_window()
         self.browser.get(url+"liked_by/")
-        time.sleep(5)
         self.showTerminal("Commentə girildi")
         for i in range(500):
             self.browser.execute_script(f"window.scrollTo(0, {i*2});")
         self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(8)
-        users = self.browser.find_element_by_class_name("x78zum5").find_elements_by_class_name("_abbj")
+        userClass = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "x78zum5")))
+        users = userClass.find_elements_by_class_name("_abbj")
         system("rm userLists.txt")
         counter = 0
         self.showTerminal("İstifadəçilər yüklənir")
         
-        time.sleep(5)
 
         for user in users:
             userLink = user.find_element_by_tag_name("a").get_attribute("href")
